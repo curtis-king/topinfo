@@ -2,98 +2,97 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\actuality as ActualityModel;
+use App\Models\ImagesActuality;
 use Illuminate\Http\Request;
 
 class actuality extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
-        $actualites=Actuality::all()->sortByDesc('publication_date');
-        return view('actuality.index',compact('actualites'));
+        $actualites = ActualityModel::latest('publication_date')->get();
 
+        return view('actuality.index', compact('actualites'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
         return view('actuality.create');
-
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
-        $request->validate([
-            'title' => 'required',
-            'content' => 'required',
+        $data = $request->validate([
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
             'publication_date' => 'required|date',
-            'description' => 'required',
+            'description' => 'required|string',
+            'image_path' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
+
+        if ($request->hasFile('image_path')) {
+            $image = $request->file('image_path');
+            $imageName = time() . '_' . $image->getClientOriginalName();
+            $image->move(public_path('images'), $imageName);
+            $data['image_path'] = 'images/' . $imageName;
+        }
+
+        ActualityModel::create($data);
+
+        return redirect()->route('actuality.index')->with('success', 'Actualité créée avec succès');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
-        //
-        $actuality=Actuality::find($id);
-        return view('actuality.show',compact('actuality'));
+        $actuality = ActualityModel::with('images')->findOrFail($id);
 
+        return view('actuality.show', compact('actuality'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
-        //
-        $actuality=Actuality::find($id);
-        return view('actuality.edit',compact('actuality'));
+        $actuality = ActualityModel::findOrFail($id);
+
+        return view('actuality.edit', compact('actuality'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
-        //
-        $request->validate([
-            'title' => 'required',
-            'content' => 'required',
+        $actuality = ActualityModel::findOrFail($id);
+
+        $data = $request->validate([
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
             'publication_date' => 'required|date',
-            'description' => 'required',
+            'description' => 'required|string',
+            'image_path' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
-        $actuality=Actuality::find($id);
-        $actuality->update($request->all());
-        return redirect()->route('actuality.index')->with('success','Actualité mise à jour avec succès');
+
+        if ($request->hasFile('image_path')) {
+            $image = $request->file('image_path');
+            $imageName = time() . '_' . $image->getClientOriginalName();
+            $image->move(public_path('images'), $imageName);
+            $data['image_path'] = 'images/' . $imageName;
+        }
+
+        $actuality->update($data);
+
+        return redirect()->route('actuality.index')->with('success', 'Actualité mise à jour avec succès');
     }
 
     public function images_actuality($id)
     {
-        $actuality = Actuality::find($id);
+        $actuality = ActualityModel::findOrFail($id);
         $images = ImagesActuality::where('actuality_id', $id)->get();
+
         return view('actuality.images', compact('actuality', 'images'));
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
-        //
-        $actuality=Actuality::find($id);
+        $actuality = ActualityModel::findOrFail($id);
         $actuality->delete();
-        return redirect()->route('actuality.index')->with('success','Actualité supprimée avec
+
+        return redirect()->route('actuality.index')->with('success', 'Actualité supprimée avec succès');
     }
 }

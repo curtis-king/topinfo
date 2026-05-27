@@ -18,6 +18,7 @@ return new class extends Migration
             $table->date('publication_date');
             $table->string('description');
             $table->string('image_path')->nullable();
+            $table->boolean('is_published')->default(false);
             $table->timestamps();
         });
     }

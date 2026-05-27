@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Partenaires extends Model
 {
@@ -15,4 +16,3 @@ class Partenaires extends Model
         'logo',
     ];
 }
-

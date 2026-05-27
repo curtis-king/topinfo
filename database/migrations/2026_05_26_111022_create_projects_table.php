@@ -17,7 +17,7 @@ return new class extends Migration
             $table->text('description');
             $table->text('details');
             $table->string('image');
-            $table->unsignedBigInteger('service_id')->nullable();
+            $table->foreignId('service_id')->nullable()->constrained('services')->cascadeOnDelete();
             $table->timestamps();
         });
     }
