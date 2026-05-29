@@ -12,7 +12,16 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                sans: ['Inter', 'Figtree', ...defaultTheme.fontFamily.sans],
+            },
+            colors: {
+                brand: {
+                    blue: '#0056A4',
+                    'blue-dark': '#004080',
+                    'blue-light': '#E8F2FA',
+                    grey: '#666666',
+                    'grey-dark': '#333333',
+                },
             },
         },
     },

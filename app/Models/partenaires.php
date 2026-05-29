@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Support\ImageStorage;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -15,4 +17,9 @@ class Partenaires extends Model
         'name',
         'logo',
     ];
+
+    protected function logoUrl(): Attribute
+    {
+        return Attribute::get(fn () => ImageStorage::url($this->logo));
+    }
 }

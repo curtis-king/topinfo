@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Partenaires;
+use App\Support\ImageStorage;
 use Illuminate\Http\Request;
 
 class partenaireController extends Controller
@@ -23,14 +24,11 @@ class partenaireController extends Controller
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',
-            'logo' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'logo' => 'required|image|mimes:jpeg,png,jpg,gif,svg,webp|max:5120',
         ]);
 
         if ($request->hasFile('logo')) {
-            $image = $request->file('logo');
-            $imageName = time() . '_' . $image->getClientOriginalName();
-            $image->storeAs('public/images', $imageName);
-            $data['logo'] = 'images/' . $imageName;
+            $data['logo'] = ImageStorage::store($request->file('logo'), 'partenaires');
         }
 
         Partenaires::create($data);
@@ -58,14 +56,12 @@ class partenaireController extends Controller
 
         $data = $request->validate([
             'name' => 'required|string|max:255',
-            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:5120',
         ]);
 
         if ($request->hasFile('logo')) {
-            $image = $request->file('logo');
-            $imageName = time() . '_' . $image->getClientOriginalName();
-            $image->storeAs('public/images', $imageName);
-            $data['logo'] = 'images/' . $imageName;
+            ImageStorage::delete($partenaire->logo);
+            $data['logo'] = ImageStorage::store($request->file('logo'), 'partenaires');
         }
 
         $partenaire->update($data);

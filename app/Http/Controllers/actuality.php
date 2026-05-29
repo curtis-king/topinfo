@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\actuality as ActualityModel;
 use App\Models\ImagesActuality;
+use App\Support\ImageStorage;
 use Illuminate\Http\Request;
 
 class actuality extends Controller
@@ -27,14 +28,11 @@ class actuality extends Controller
             'content' => 'required|string',
             'publication_date' => 'required|date',
             'description' => 'required|string',
-            'image_path' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image_path' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:5120',
         ]);
 
         if ($request->hasFile('image_path')) {
-            $image = $request->file('image_path');
-            $imageName = time() . '_' . $image->getClientOriginalName();
-            $image->move(public_path('images'), $imageName);
-            $data['image_path'] = 'images/' . $imageName;
+            $data['image_path'] = ImageStorage::store($request->file('image_path'), 'actualities');
         }
 
         ActualityModel::create($data);
@@ -65,14 +63,12 @@ class actuality extends Controller
             'content' => 'required|string',
             'publication_date' => 'required|date',
             'description' => 'required|string',
-            'image_path' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image_path' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:5120',
         ]);
 
         if ($request->hasFile('image_path')) {
-            $image = $request->file('image_path');
-            $imageName = time() . '_' . $image->getClientOriginalName();
-            $image->move(public_path('images'), $imageName);
-            $data['image_path'] = 'images/' . $imageName;
+            ImageStorage::delete($actuality->image_path);
+            $data['image_path'] = ImageStorage::store($request->file('image_path'), 'actualities');
         }
 
         $actuality->update($data);

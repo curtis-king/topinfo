@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\projects;
 use App\Models\services;
+use App\Support\ImageStorage;
 use Illuminate\Http\Request;
 
 class projectController extends Controller
@@ -29,14 +30,11 @@ class projectController extends Controller
             'description' => 'required|string',
             'details' => 'nullable|string',
             'service_id' => 'required|exists:services,id',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:5120',
         ]);
 
         if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $imageName = time() . '_' . $image->getClientOriginalName();
-            $image->move(public_path('images'), $imageName);
-            $data['image'] = 'images/' . $imageName;
+            $data['image'] = ImageStorage::store($request->file('image'), 'projects');
         }
 
         projects::create($data);
@@ -68,14 +66,12 @@ class projectController extends Controller
             'description' => 'required|string',
             'details' => 'nullable|string',
             'service_id' => 'required|exists:services,id',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:5120',
         ]);
 
         if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $imageName = time() . '_' . $image->getClientOriginalName();
-            $image->move(public_path('images'), $imageName);
-            $data['image'] = 'images/' . $imageName;
+            ImageStorage::delete($project->image);
+            $data['image'] = ImageStorage::store($request->file('image'), 'projects');
         }
 
         $project->update($data);

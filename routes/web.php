@@ -20,10 +20,12 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::resource('projects', projectController::class);
-Route::resource('partenaires', partenaireController::class);
-Route::resource('services', services::class);
-Route::resource('actuality', actuality::class);
-Route::get('actuality/{id}/images', [actuality::class, 'images_actuality'])->name('actuality.images');
+Route::middleware('auth')->group(function () {
+    Route::resource('projects', projectController::class);
+    Route::resource('partenaires', partenaireController::class);
+    Route::resource('services', services::class);
+    Route::resource('actuality', actuality::class);
+    Route::get('actuality/{id}/images', [actuality::class, 'images_actuality'])->name('actuality.images');
+});
 
 require __DIR__.'/auth.php';

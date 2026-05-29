@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Support\ImageStorage;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 
 class produits extends Model
@@ -15,4 +17,9 @@ class produits extends Model
         'description',
         'image',
     ];
+
+    protected function imageUrl(): Attribute
+    {
+        return Attribute::get(fn () => ImageStorage::url($this->image));
+    }
 }

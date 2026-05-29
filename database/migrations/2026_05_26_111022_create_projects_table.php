@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->text('description');
-            $table->text('details');
-            $table->string('image');
+            $table->text('details')->nullable();
+            $table->string('image')->nullable();
             $table->foreignId('service_id')->nullable()->constrained('services')->cascadeOnDelete();
             $table->timestamps();
         });
