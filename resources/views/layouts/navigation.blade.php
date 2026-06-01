@@ -1,12 +1,8 @@
 <div x-data="{ sidebarOpen: false }">
-    <nav class="fixed inset-y-0 left-0 z-30 w-64 flex flex-col bg-gradient-to-b from-[#0f1e3d] via-[#13294b] to-[#1a365d] shadow-2xl transition-all duration-300 ease-out lg:translate-x-0" :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
+    <nav class="fixed inset-y-0 left-0 z-30 w-64 flex flex-col bg-gradient-to-b from-[#0A1F6E] via-[#1A3FA8] to-[#1A3FA8] shadow-2xl transition-all duration-300 ease-out lg:translate-x-0" :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
         <div class="flex items-center gap-3 px-6 h-16 border-b border-white/10">
-            <div class="flex-shrink-0">
-                <x-application-logo class="w-8 h-8 text-blue-400" />
-            </div>
-            <div>
-                <h1 class="text-lg font-bold text-white tracking-tight">{{ config('app.name', 'TopInfo') }}</h1>
-                <p class="text-xs text-blue-300/70">Espace administration</p>
+            <div style="background:rgba(255,255,255,0.12);border-radius:8px;padding:5px 10px;display:inline-block;">
+                <img src="{{ asset('images/logo-topinfo.png') }}" alt="TOP INFO" style="height:36px;width:auto;object-fit:contain;display:block;">
             </div>
         </div>
 
@@ -37,7 +33,7 @@
         <div class="p-3 border-t border-white/10">
             <div x-data="{ profileOpen: false }" class="relative">
                 <button @click="profileOpen = !profileOpen" class="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-white/80 hover:text-white hover:bg-white/10 transition-all duration-200 group">
-                    <div class="w-9 h-9 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-sm font-bold shadow-lg">
+                    <div class="w-9 h-9 rounded-full bg-gradient-to-br from-[#2563EB] to-[#0A1F6E] flex items-center justify-center text-white text-sm font-bold shadow-lg">
                         {{ substr(Auth::user()->name, 0, 2) }}
                     </div>
                     <div class="flex-1 text-left min-w-0">
@@ -48,7 +44,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                     </svg>
                 </button>
-                <div x-show="profileOpen" @click.outside="profileOpen = false" class="absolute bottom-full left-0 right-0 mb-2 bg-[#1a2d52] border border-white/10 rounded-xl shadow-xl overflow-hidden" x-cloak>
+                <div x-show="profileOpen" @click.outside="profileOpen = false" class="absolute bottom-full left-0 right-0 mb-2 bg-[#1A3FA8] border border-white/10 rounded-xl shadow-xl overflow-hidden" x-cloak>
                     <a href="{{ route('profile.edit') }}" class="flex items-center gap-3 px-4 py-3 text-sm text-white/80 hover:text-white hover:bg-white/10 transition-colors">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
