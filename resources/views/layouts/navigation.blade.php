@@ -28,6 +28,10 @@
             <x-sidebar-link :href="route('actuality.index')" :active="request()->routeIs('actuality.*')" icon="actuality">
                 {{ __('Actualités') }}
             </x-sidebar-link>
+
+            <x-sidebar-link :href="route('galerie.index')" :active="request()->routeIs('galerie.*')" icon="galerie">
+                {{ __('Galerie') }}
+            </x-sidebar-link>
         </div>
 
         <div class="p-3 border-t border-white/10">

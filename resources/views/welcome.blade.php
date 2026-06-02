@@ -158,6 +158,29 @@
     .product-body h3 { font-size: .95rem; font-weight: 800; color: #0A1F6E; margin-bottom: .4rem; }
     .product-body p { font-size: .8rem; color: #64748b; line-height: 1.6; }
 
+    /* ── GALERIE ── */
+    #galerie { background: linear-gradient(180deg, #f0f5ff 0%, #f8faff 100%); }
+    .galerie-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: .75rem; padding: 0 2rem; max-width: 1140px; margin: 0 auto; }
+    .galerie-item { position: relative; aspect-ratio: 1; border-radius: 14px; overflow: hidden; cursor: pointer; border: 1px solid #dbeafe; }
+    .galerie-item img { width: 100%; height: 100%; object-fit: cover; transition: transform .35s; }
+    .galerie-item:hover img { transform: scale(1.08); }
+    .galerie-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(10,31,110,0.82) 0%, transparent 55%); opacity: 0; transition: opacity .3s; display: flex; flex-direction: column; justify-content: flex-end; padding: .75rem; }
+    .galerie-item:hover .galerie-overlay { opacity: 1; }
+    .galerie-overlay h4 { color: #fff; font-size: .78rem; font-weight: 700; margin: 0; line-height: 1.3; }
+    .galerie-overlay p { color: #bfdbfe; font-size: .68rem; margin: .2rem 0 0; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    /* lightbox */
+    .lb-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.88); z-index: 1000; align-items: center; justify-content: center; padding: 1.5rem; }
+    .lb-backdrop.open { display: flex; }
+    .lb-box { max-width: 860px; width: 100%; background: #fff; border-radius: 20px; overflow: hidden; position: relative; box-shadow: 0 40px 100px rgba(0,0,0,.5); }
+    .lb-img { width: 100%; max-height: 72vh; object-fit: contain; background: #0a1020; display: block; }
+    .lb-info { padding: 1.2rem 1.5rem; }
+    .lb-info h3 { font-size: 1rem; font-weight: 800; color: #0A1F6E; margin: 0 0 .3rem; }
+    .lb-info p { font-size: .85rem; color: #64748b; margin: 0; line-height: 1.6; }
+    .lb-close { position: absolute; top: .8rem; right: .8rem; background: rgba(255,255,255,.15); border: none; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #fff; font-size: 1.1rem; transition: background .2s; z-index: 10; }
+    .lb-close:hover { background: rgba(255,255,255,.3); }
+    @media (max-width: 768px) { .galerie-grid { grid-template-columns: repeat(2,1fr); padding: 0; } }
+    @media (max-width: 1024px) and (min-width: 769px) { .galerie-grid { grid-template-columns: repeat(3,1fr); } }
+
     /* ── ACTUALITÉS ── */
     #actualities { background: #fff; }
     .actu-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; padding: 0 2rem; max-width: 1140px; margin: 0 auto; }
@@ -226,6 +249,9 @@
     @if($produits->count())
     <li><a href="#produits">Produits</a></li>
     @endif
+    @if($galeries->count())
+    <li><a href="#galerie">Galerie</a></li>
+    @endif
     @if($actualities->count())
     <li><a href="#actualities">Actualités</a></li>
     @endif
@@ -247,6 +273,7 @@
     @if($projects->count())<a href="#projets">Projets</a>@endif
     @if($partenaires->count())<a href="#partenaires">Partenaires</a>@endif
     @if($produits->count())<a href="#produits">Produits</a>@endif
+    @if($galeries->count())<a href="#galerie">Galerie</a>@endif
     @if($actualities->count())<a href="#actualities">Actualités</a>@endif
     @if(Route::has('login'))
       @auth
@@ -317,8 +344,8 @@
       <div class="info-card-icon">📞</div>
       <h4>Appelez-nous</h4>
       <p>Disponibles pour vous</p>
-      <a href="tel:+242068690009">+242 06 869 00 09</a>
-      <a href="tel:+242064313506">06 431 35 06</a>
+      <a href="tel:+242061062323">Brazzaville: +242 06 106 23 23</a>
+      <a href="tel:+242064313506">Pointe-Noire: +242 06 105 23 23</a>
     </div>
     <div class="info-card reveal">
       <div class="info-card-icon">🕐</div>
@@ -326,8 +353,6 @@
       <p>Fermé les dimanches</p>
       <span class="info-highlight">Lundi à Vendredi</span>
       <span class="info-highlight">8H00 – 16H00</span>
-      <span class="info-highlight">Samedi</span>
-      <span class="info-highlight">9H00 – 12H00</span>
     </div>
     <div class="info-card reveal">
       <div class="info-card-icon">📍</div>
@@ -507,6 +532,46 @@
 </section>
 @endif
 
+{{-- ══════════ GALERIE ══════════ --}}
+@if($galeries->count())
+<section id="galerie">
+  <div class="container">
+    <div class="section-heading reveal">
+      <span class="label">Notre galerie</span>
+      <h2>Photos</h2>
+      <div class="bar"></div>
+      <p>Quelques moments et réalisations en images</p>
+    </div>
+  </div>
+  <div class="galerie-grid">
+    @foreach($galeries as $g)
+    <div class="galerie-item reveal"
+         onclick="openLightbox('{{ $g->image_url }}', '{{ addslashes($g->title) }}', '{{ addslashes($g->description ?? '') }}')">
+      <img src="{{ $g->image_url }}" alt="{{ $g->title }}" loading="lazy">
+      <div class="galerie-overlay">
+        <h4>{{ $g->title }}</h4>
+        @if($g->description)
+          <p>{{ $g->description }}</p>
+        @endif
+      </div>
+    </div>
+    @endforeach
+  </div>
+</section>
+
+{{-- Lightbox --}}
+<div class="lb-backdrop" id="lb-backdrop" onclick="closeLightbox(event)">
+  <div class="lb-box">
+    <button class="lb-close" onclick="document.getElementById('lb-backdrop').classList.remove('open')">✕</button>
+    <img id="lb-img" class="lb-img" src="" alt="">
+    <div class="lb-info">
+      <h3 id="lb-title"></h3>
+      <p id="lb-desc"></p>
+    </div>
+  </div>
+</div>
+@endif
+
 {{-- ══════════ ACTUALITÉS ══════════ --}}
 @if($actualities->count())
 <section id="actualities">
@@ -605,6 +670,27 @@
   // ── MOBILE NAV ──
   document.getElementById('burger')?.addEventListener('click', () => {
     document.getElementById('mobile-nav')?.classList.toggle('open');
+  });
+
+  // ── LIGHTBOX ──
+  function openLightbox(src, title, desc) {
+    document.getElementById('lb-img').src = src;
+    document.getElementById('lb-title').textContent = title;
+    document.getElementById('lb-desc').textContent = desc;
+    document.getElementById('lb-backdrop').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeLightbox(e) {
+    if (e.target === document.getElementById('lb-backdrop')) {
+      document.getElementById('lb-backdrop').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+  }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      document.getElementById('lb-backdrop')?.classList.remove('open');
+      document.body.style.overflow = '';
+    }
   });
 </script>
 </body>

@@ -6,6 +6,7 @@ use App\Http\Controllers\projectController;
 use App\Http\Controllers\partenaireController;
 use App\Http\Controllers\services;
 use App\Http\Controllers\actuality;
+use App\Http\Controllers\GalerieController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [PageController::class, 'index']);
@@ -26,6 +27,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('services', services::class);
     Route::resource('actuality', actuality::class);
     Route::get('actuality/{id}/images', [actuality::class, 'images_actuality'])->name('actuality.images');
+    Route::resource('galerie', GalerieController::class)->except(['show']);
 });
 
 require __DIR__.'/auth.php';
